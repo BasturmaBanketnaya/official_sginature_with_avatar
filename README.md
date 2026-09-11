@@ -118,7 +118,7 @@ The generated signature includes:
 
 - **Dimensions**: 600px × 200px
 - **Layout**: Two-column table structure
-- **Left Column**: Employee photo (100x100px, JPEG shipped at exactly 100x100) + SPREAD logo (92x20px JPEG data URI on the signature's white background; PNG and SVG data URIs were converted to blocked external images by new Outlook on send)
+- **Left Column**: Employee photo (100x100px JPEG, cropped square) + SPREAD logo (transparent PNG data URI, shipped at 184x40 and shown 92x20 so it is crisp on retina and has no white box in dark Outlook)
 - **Right Column**: Employee details and company information
 - **Accent Color**: Orange (#FF6F47)
 - **Font**: DIN Pro (fallback: Arial)

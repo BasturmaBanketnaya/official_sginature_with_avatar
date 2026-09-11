@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import './App.css';
-// The SPREAD logo ships as a JPEG data URI at exactly its display size (92x20),
-// the same form as the photo. Tested in new Outlook for Mac: a PNG data URI and an
-// SVG data URI both rendered in the compose window but came out as a blocked
-// "external image" (alt-text box) once the mail was sent, while the JPEG photo
-// survived that conversion every time. JPEG has no alpha, so the logo sits on the
-// signature's own #FFFFFF background. `?inline` forces the data URI regardless of size.
-import spreadLogo from './assets/spread-logo-92x20.jpg?inline';
+// The SPREAD logo is a TRANSPARENT PNG data URI at 2x its display size (184x40,
+// shown 92x20 -> crisp on retina, transparent so no white box in dark Outlook).
+// `?inline` forces the data URI regardless of file size. On send, new Outlook
+// converts every data URI (the photo too) into an inline CID attachment, so it is
+// never fetched as an external image.
+import spreadLogo from './assets/spread-logo-184x40.png?inline';
 
 // Display size of the images inside the signature, in CSS px.
 const PHOTO_SIZE = 100;
