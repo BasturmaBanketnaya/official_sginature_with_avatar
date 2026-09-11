@@ -118,12 +118,12 @@ The generated signature includes:
 
 - **Dimensions**: 600px × 200px
 - **Layout**: Two-column table structure
-- **Left Column**: Employee photo (100x100px, bitmap shipped at 200x200) + SPREAD logo (92x20px, bitmap shipped at 184x40 as an inline data URI)
+- **Left Column**: Employee photo (100x100px, JPEG shipped at exactly 100x100) + SPREAD logo (92x20px JPEG data URI on the signature's white background; PNG and SVG data URIs were converted to blocked external images by new Outlook on send)
 - **Right Column**: Employee details and company information
 - **Accent Color**: Orange (#FF6F47)
 - **Font**: DIN Pro (fallback: Arial)
 - **Icons**: Phone, Email, LinkedIn (embedded as SVG data URIs)
-- **Image sizing**: every `<img>` carries HTML `width`/`height` attributes plus the same CSS size. Outlook (Word rendering engine, Outlook.com, Outlook for Mac) does not support `object-fit`, so the crop has to happen in the bitmap, and the bitmaps are shipped at 2x display size so a client that drops the CSS sizing renders them at most 2x, never at the photo's native resolution
+- **Image sizing**: every `<img>` carries HTML `width`/`height` attributes plus the same CSS size, and every image file is exactly its display size. Outlook does not support `object-fit`, so the crop has to happen in the bitmap; and new Outlook / Outlook on the web strip `width`, `height` and `style` from pasted `<img>` tags, so the image then renders at its native pixel size, which is why the native size must equal the display size (a 2x photo rendered at 200px in new Outlook for Mac)
 - **Company Info**: SPREAD GmbH address and legal details
 
 ## Customization
