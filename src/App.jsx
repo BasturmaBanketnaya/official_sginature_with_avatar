@@ -22,12 +22,32 @@ const RENDER_SCALE = 2;
 // stretched; a photo shipped at its native resolution can also render at full
 // size when a client loses the CSS sizing (reply chains). Doing the crop and
 // the resize here means the bitmap itself is already right.
+// iPhones save photos as HEIC/HEIF, which browsers cannot decode with the
+// built-in Image element (Chrome and Windows in particular fail silently, giving
+// a 0x0 image and a broken preview). Convert those to a JPEG blob first, in the
+// browser, with heic2any. Loaded on demand so it never weighs on a normal upload.
+function isHeic(file) {
+  return /image\/hei[cf]/i.test(file.type) || /\.(heic|heif)$/i.test(file.name);
+}
+
+async function toDecodableFile(file) {
+  if (!isHeic(file)) return file;
+  const { default: heic2any } = await import('heic2any');
+  const out = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+  const blob = Array.isArray(out) ? out[0] : out;
+  return new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
+}
+
 function cropPhotoToSquare(file, size) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
       URL.revokeObjectURL(url);
+      if (!img.naturalWidth || !img.naturalHeight) {
+        reject(new Error('The image decoded to zero size'));
+        return;
+      }
       let source = img;
       let side = Math.min(img.naturalWidth, img.naturalHeight);
       let sx = Math.round((img.naturalWidth - side) / 2);
@@ -98,7 +118,8 @@ function App() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const photoPreview = await cropPhotoToSquare(file, PHOTO_SIZE * RENDER_SCALE);
+      const decodable = await toDecodableFile(file);
+      const photoPreview = await cropPhotoToSquare(decodable, PHOTO_SIZE * RENDER_SCALE);
       setFormData(prev => ({
         ...prev,
         photo: file,
@@ -106,7 +127,7 @@ function App() {
       }));
     } catch (err) {
       console.error('Failed to process photo:', err);
-      alert('This file could not be read as an image. Please upload a JPG or PNG photo.');
+      alert('This photo could not be read. Please try a JPG or PNG, or re-save the photo and upload again.');
     }
   };
 
@@ -141,13 +162,13 @@ function App() {
             <label htmlFor="photo">Photo Upload *</label>
             <p className="field-hint">
               Any photo shape works. It is cropped to a centered square and
-              resized here, so what you see in the preview is exactly what
-              Outlook sends.
+              resized here (iPhone HEIC photos too), so what you see in the preview
+              is exactly what Outlook sends.
             </p>
             <input
               type="file"
               id="photo"
-              accept="image/*"
+              accept="image/*,.heic,.heif"
               onChange={handlePhotoUpload}
               required
             />

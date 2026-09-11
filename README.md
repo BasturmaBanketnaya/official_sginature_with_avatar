@@ -6,6 +6,7 @@ A web-based email signature generator built specifically for SPREAD GmbH employe
 
 - **Interactive Form**: Simple form interface to input employee details
 - **Photo Upload**: Upload any headshot; it is cropped to a centered square and resized in the browser, so the bitmap Outlook receives is already the right shape and size
+- **HEIC support**: iPhone HEIC/HEIF photos are converted to JPEG in the browser (heic2any, loaded on demand) before cropping, so they no longer break the preview
 - **Live Preview**: Real-time preview of the signature as you type
 - **One-Click Copy**: Copy signature directly to clipboard in HTML format
 - **Email-Optimized**: Uses inline styles and table-based layout for maximum email client compatibility
